@@ -34,8 +34,9 @@ public class MagiSystemStrategy extends Strategy {
 	}
 
 	// 開放度理論に基づく打ち方
-	bestMove.x = this.BestKaihoMoveDepth2(currentState)[0][0];
-	bestMove.y = this.BestKaihoMoveDepth2(currentState)[0][1];
+	int[][] SubMove = this.BestKaihoMoveDepth2(currentState);
+	bestMove.x = SubMove[0][0];
+	bestMove.y = SubMove[0][1];
 
 	System.out.println("CPU's move:" + bestMove.toString()); // デバック用。コンソールにCPUの手を表示。
 	return bestMove; // 最良の手を返す
@@ -121,23 +122,30 @@ public class MagiSystemStrategy extends Strategy {
 	GameState nPulus1State = new GameState(SIZE);// バグを生みそうな初期化の仕方なので本当はやりたくない。が、やらないと怒られる。
 	SubMove = KaihoRankNs(nState, thisPlayer,
 		nState.numAvailable(thisPlayer));// 現在の盤面から打てる手の内、開放度的に良い手から順に並べた手一覧を取得
-	System.out.println(SubMove[0][0]);
+
 	for (int i = 0; i < nState.numAvailable(thisPlayer); i++) {
+	    System.out.println(SubMove[i][0] + "," + SubMove[i][1] + ","
+		    + SubMove[i][2]);
 	    try {
-		nPulus1State = nState.nextState(thisPlayer.oppositePlayer(),
-			SubMove[i][0], SubMove[i][1]);
+		nPulus1State = nState.nextState(thisPlayer, SubMove[i][0],
+			SubMove[i][1]);
 	    } catch (OthelloMoveException e) {
 		// TODO 自動生成された catch ブロック
 		e.printStackTrace(); // これなんでこんなことしないといけないの？
 	    }
 	    SubMovePulus1 = KaihoRankNs(nPulus1State,
 		    thisPlayer.oppositePlayer(), 1);// 次の盤面で、相手が最も開放度的に良い手を選び出す
+	    System.out.println(SubMove[i][2]);
+	    System.out.println(SubMovePulus1[0][2]);
+	    System.out.println(SubMove[i][2] - SubMovePulus1[0][2]);
 	    // もし、(自分の手の開放度)-(相手の開放度)が現在知っている最善手よりよければ、それを最善手として記憶する
 	    if (BestMove[0][2] < SubMove[i][2] - SubMovePulus1[0][2]) {
 		BestMove[0][0] = SubMove[i][0];
 		BestMove[0][1] = SubMove[i][1];
 		BestMove[0][2] = SubMove[i][2] - SubMovePulus1[0][2];
 	    }
+	    System.out.println("現在の最善手は(" + BestMove[0][0] + ","
+		    + BestMove[0][1] + ")でその値は" + BestMove[0][2]);
 	}
 	// BestMoveは[0][0]にi、[0][1]にj、[0][2]にその自分の開放度-相手の開放度が格納されている。
 	return BestMove;
