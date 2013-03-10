@@ -5,7 +5,6 @@ import game.Move;
 import game.OthelloMoveException;
 import game.Player;
 import game.Strategy;
-import util.Util;
 
 public class KmatsStrategy extends Strategy {
 

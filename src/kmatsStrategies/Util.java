@@ -1,4 +1,4 @@
-package util;
+package kmatsStrategies;
 
 import game.GameState;
 import game.Player;
